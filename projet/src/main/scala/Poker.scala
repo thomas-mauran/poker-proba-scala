@@ -36,7 +36,7 @@ object Poker:
   }
 
   def nextCard(card: PlayingCard): PlayingCard = card match {
-    case PlayingCard.Group(a, x) => PlayingCard.Group(a, Numero.fromOrdinal(x.ordinal + 1))
+    case PlayingCard.Group(a, x) => if (x.ordinal + 1 > Numero.values.length - 1) null else PlayingCard.Group(a, Numero.fromOrdinal(x.ordinal + 1))
   }
 
   enum MainsPossible:
@@ -88,22 +88,31 @@ object Poker:
   }
 
   def getQuinte(main: List[PlayingCard]): List[MainsPossible] = {
-    val quinte = isQuinte(main)
-    val couleur = isCouleur(main)
+    val mainSortedNumero = main.sorted(CarteClassementNumero)
+    val quinte = isQuinte(mainSortedNumero)
+    val couleur = isCouleur(mainSortedNumero)
 
-    if (couleur && quinte) MainsPossible.Couleur :: MainsPossible.QuintFlush :: Nil else
-      if (quinte) MainsPossible.Quinte :: Nil else
-        if (couleur) MainsPossible.Couleur :: Nil else Nil
+    if (couleur && quinte && isQuinteFlushRoyale(mainSortedNumero)) MainsPossible.QuintFlushRoyale :: MainsPossible.QuintFlush :: MainsPossible.Couleur :: Nil else
+      if (couleur && quinte) MainsPossible.Couleur :: MainsPossible.QuintFlush :: Nil else
+        if (quinte) MainsPossible.Quinte :: Nil else
+          if (couleur) MainsPossible.Couleur :: Nil else Nil
+  }
+
+  def isQuinteFlushRoyale(main: List[PlayingCard]): Boolean = main match {
+    case Nil => false
+    case PlayingCard.Group(_, x) :: z => x == Numero.Dix
   }
 
   def isQuinte(main: List[PlayingCard]): Boolean = main match {
     case Nil => false
-    case x :: y :: z => if (nextCard(x) == y) isQuinte(main) else false
+    case x :: Nil => true
+    case x :: y :: z => if (nextCard(x) == y) isQuinte(y :: z) else false
   }
 
   def isCouleur(main: List[PlayingCard]): Boolean = main match {
     case Nil => false
-    case PlayingCard.Group(x, _) :: PlayingCard.Group(y, _) :: z => if (x == z) isCouleur(z) else false
+    case x :: Nil => true
+    case PlayingCard.Group(x, a) :: PlayingCard.Group(y, b) :: z => if (x == y) isCouleur(PlayingCard.Group(y, b) :: z) else false
   }
 
   def getMains(main: List[PlayingCard]): List[MainsPossible] = MainsPossible.PlusHaute :: getMainsNumero(getMultipleOccurence(main)).concat(getQuinte(main))
@@ -115,5 +124,3 @@ object Poker:
       case (x, y) => y.ordinal - x.ordinal;
     }
   }
-
-  def hello(): Boolean = true

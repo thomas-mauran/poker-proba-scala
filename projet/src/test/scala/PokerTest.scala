@@ -3,20 +3,20 @@ import org.scalatest.matchers.should.Matchers.{an, shouldBe, be, should, shouldE
 import Poker.*
 
 class PokerTest extends AnyFlatSpec {
-  /*
-  "CarteClassement" should "be defined" in {
-    CarteClassement.compare(PlayingCard.Group(Couleurs.Coeur, Numero.As), PlayingCard.Group(Couleurs.Coeur, Numero.Deux)) should be > 0
-    CarteClassement.compare(PlayingCard.Group(Couleurs.Coeur, Numero.Deux), PlayingCard.Group(Couleurs.Coeur, Numero.As)) should be < 0
-    CarteClassement.compare(PlayingCard.Group(Couleurs.Coeur, Numero.As), PlayingCard.Group(Couleurs.Coeur, Numero.As)) shouldEqual 0
+
+  "CarteClassementNumero" should "be defined" in {
+    CarteClassementNumero.compare(PlayingCard.Group(Couleurs.Coeur, Numero.As), PlayingCard.Group(Couleurs.Coeur, Numero.Deux)) should be > 0
+    CarteClassementNumero.compare(PlayingCard.Group(Couleurs.Coeur, Numero.Deux), PlayingCard.Group(Couleurs.Coeur, Numero.As)) should be < 0
+    CarteClassementNumero.compare(PlayingCard.Group(Couleurs.Coeur, Numero.As), PlayingCard.Group(Couleurs.Coeur, Numero.As)) shouldEqual 0
   }
-  */
+
 
   "HandClassement" should "be defined" in {
     HandClassement.compare(MainsPossible.PlusHaute, MainsPossible.Full) should be > 0
     HandClassement.compare(MainsPossible.Full, MainsPossible.PlusHaute) should be < 0
     HandClassement.compare(MainsPossible.PlusHaute, MainsPossible.PlusHaute) shouldEqual  0
   }
-  */
+
 
   "getOccurence" should "be defined" in {
     val maMain1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.Trois) :: Nil
@@ -60,12 +60,13 @@ class PokerTest extends AnyFlatSpec {
 
   "getBestMains" should "be defined" in {
     val maMain1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: Nil
-    println(getMains(maMain1).sorted(HandClassement))
+    info(getMains(maMain1).sorted(HandClassement).toString())
     getBestMain(maMain1) shouldBe MainsPossible.Full
 
 
     val maMain2 = PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.Roi) :: PlayingCard.Group(Couleurs.Coeur, Numero.Dame) :: PlayingCard.Group(Couleurs.Coeur, Numero.Valet) :: PlayingCard.Group(Couleurs.Coeur, Numero.Dix) :: Nil
-    println(getMains(maMain2).sorted(HandClassement))
+    info(maMain2.sorted(CarteClassementNumero).toString())
+    info(getMains(maMain2).sorted(HandClassement).toString())
     getBestMain(maMain2) shouldBe MainsPossible.QuintFlushRoyale
 
   }
