@@ -124,3 +124,33 @@ object Poker:
       case (x, y) => y.ordinal - x.ordinal;
     }
   }
+
+  def getAllCardsAux(i: Int, j: Int, pile: List[PlayingCard]): List[PlayingCard] = {
+    if (j + 1 > 12 && i + 1 > 4)
+      pile
+    else if (i + 1 > 4)
+      getAllCardsAux(1, j + 1, PlayingCard.Group(Couleurs.fromOrdinal(0), Numero.fromOrdinal(j + 1)) :: pile)
+    else
+      getAllCardsAux(i + 1, j, PlayingCard.Group(Couleurs.fromOrdinal(i), Numero.fromOrdinal(j)) :: pile)
+  }
+
+  def getAllCards(): List[PlayingCard] = getAllCardsAux(0, 0, Nil)
+
+  def cartesPossible(exclude: List[PlayingCard]): List[PlayingCard] = getAllCards() diff exclude
+
+  def cartePossibleMainAux(curMain: List[PlayingCard], main: MainsPossible, possible: List[PlayingCard], impossible: List[PlayingCard]): List[PlayingCard] = cartesPossible(curMain.concat(impossible).concat(possible)) match {
+    case Nil => possible
+    case x :: z => if (getBestMain(x :: curMain) == main) cartePossibleMainAux(curMain, main, x :: possible, impossible) else cartePossibleMainAux(curMain, main, possible, x :: impossible)
+  }
+
+  /*
+    Fonction pour savoir quelles cartes sont possible pour avoir la main, a condition que curMain ai une taille de 4 cartes, on cherche à trouver la 5eme
+  */
+  def cartePossibleMain(curMain: List[PlayingCard], main: MainsPossible): List[PlayingCard] = cartePossibleMainAux(curMain, main, Nil, Nil)
+
+  def getProbaMain(curMain: List[PlayingCard], testMain: MainsPossible): Double = cartePossibleMain(curMain, testMain).length / 52.0
+
+  def probaMain(curMain: List[PlayingCard], m: Number, ): List[(MainsPossible, Float)] = {
+    if (m == 0) (getBestMain(curMain), 1) :: Nil
+    else if (m == 1) Nil
+  }
