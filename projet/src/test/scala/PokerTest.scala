@@ -16,6 +16,7 @@ class PokerTest extends AnyFlatSpec {
     HandClassement.compare(MainsPossible.Full, MainsPossible.PlusHaute) should be < 0
     HandClassement.compare(MainsPossible.PlusHaute, MainsPossible.PlusHaute) shouldEqual  0
   }
+  */
 
   "getOccurence" should "be defined" in {
     val maMain1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.Trois) :: Nil
@@ -47,7 +48,7 @@ class PokerTest extends AnyFlatSpec {
 
   "getMainsNumero" should "be defined" in {
     val maMain1 = (PlayingCard.Group(Couleurs.Coeur, Numero.Deux), 3) :: (PlayingCard.Group(Couleurs.Coeur, Numero.As), 2) :: Nil
-    val maMain12 = MainsPossible.Full :: Nil
+    val maMain12 = MainsPossible.DeuxPaire :: MainsPossible.Paire :: MainsPossible.Paire :: Nil
     getMainsNumero(maMain1) shouldBe maMain12
   }
 
@@ -61,6 +62,19 @@ class PokerTest extends AnyFlatSpec {
     val maMain1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: Nil
     println(getMains(maMain1).sorted(HandClassement))
     getBestMain(maMain1) shouldBe MainsPossible.Full
+
+
+    val maMain2 = PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.Roi) :: PlayingCard.Group(Couleurs.Coeur, Numero.Dame) :: PlayingCard.Group(Couleurs.Coeur, Numero.Valet) :: PlayingCard.Group(Couleurs.Coeur, Numero.Dix) :: Nil
+    println(getMains(maMain2).sorted(HandClassement))
+    getBestMain(maMain2) shouldBe MainsPossible.QuintFlushRoyale
+
   }
+
+  /*
+  "getQuinte" should "be defined" in {
+    val main1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.Trois) :: PlayingCard.Group(Couleurs.Coeur, Numero.Quatre) :: PlayingCard.Group(Couleurs.Coeur, Numero.Cinq) :: PlayingCard.Group(Couleurs.Trefle, Numero.Six) :: Nil
+    getQuinte(main1) shouldEqual true
+  }
+  */
 
 }
