@@ -76,6 +76,5 @@ class PokerTest extends AnyFlatSpec {
     val main1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.Trois) :: PlayingCard.Group(Couleurs.Coeur, Numero.Quatre) :: PlayingCard.Group(Couleurs.Coeur, Numero.Cinq) :: PlayingCard.Group(Couleurs.Trefle, Numero.Six) :: Nil
     getQuinte(main1) shouldEqual true
   }
-  */
 
 }
