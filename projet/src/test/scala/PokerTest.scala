@@ -53,9 +53,37 @@ class PokerTest extends AnyFlatSpec {
   }
 
   "getMains" should "be defined" in {
-    val maMain1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: Nil
-    val mains = MainsPossible.PlusHaute :: MainsPossible.Full :: MainsPossible.DeuxPaire :: MainsPossible.Paire :: MainsPossible.Paire :: Nil
-    getMains(maMain1) shouldBe mains
+
+    val maMain1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Trefle, Numero.Deux) :: Nil
+    val mains1 = MainsPossible.PlusHaute :: MainsPossible.Paire :: Nil
+    getMains(maMain1) shouldBe mains1
+
+    val maMain2 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Trefle, Numero.Deux) :: PlayingCard.Group(Couleurs.Trefle, Numero.As) :: PlayingCard.Group(Couleurs.Pique, Numero.As) :: Nil
+    val mains2 = MainsPossible.PlusHaute  :: MainsPossible.DeuxPaire :: MainsPossible.Paire :: MainsPossible.Brelan :: MainsPossible.Paire :: Nil
+    getMains(maMain2) shouldBe mains2
+
+    val maMain3 = PlayingCard.Group(Couleurs.Trefle, Numero.Deux) :: PlayingCard.Group(Couleurs.Carreau, Numero.Deux) :: PlayingCard.Group(Couleurs.Pique, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: Nil
+    val mains3 = MainsPossible.PlusHaute :: MainsPossible.Carre ::  MainsPossible.Brelan :: MainsPossible.Paire :: Nil
+    getMains(maMain3) shouldBe mains3
+
+
+    val maMain4 = PlayingCard.Group(Couleurs.Trefle, Numero.As) :: PlayingCard.Group(Couleurs.Trefle, Numero.Dame) :: PlayingCard.Group(Couleurs.Trefle, Numero.Dix) :: PlayingCard.Group(Couleurs.Trefle, Numero.Valet) ::  PlayingCard.Group(Couleurs.Trefle, Numero.Roi) :: Nil
+    val mains4 = MainsPossible.PlusHaute :: MainsPossible.QuintFlushRoyale :: MainsPossible.QuintFlush :: MainsPossible.Couleur :: Nil
+    getMains(maMain4) shouldBe mains4
+
+    val maMain5 = PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Trefle, Numero.Dame) :: PlayingCard.Group(Couleurs.Trefle, Numero.Dix) :: PlayingCard.Group(Couleurs.Trefle, Numero.Valet) ::  PlayingCard.Group(Couleurs.Trefle, Numero.Roi) :: Nil
+    val mains5 = MainsPossible.PlusHaute :: MainsPossible.Quinte :: Nil
+    getMains(maMain5) shouldBe mains5
+
+    val maMain6 = PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Trefle, Numero.Deux) :: PlayingCard.Group(Couleurs.Trefle, Numero.Trois) :: PlayingCard.Group(Couleurs.Coeur, Numero.Valet) ::  PlayingCard.Group(Couleurs.Trefle, Numero.Roi) :: Nil
+    val mains6 = MainsPossible.PlusHaute :: Nil
+    getMains(maMain6) shouldBe mains6
+
+    val maMain7 = PlayingCard.Group(Couleurs.Coeur, Numero.As) :: PlayingCard.Group(Couleurs.Trefle, Numero.As) :: PlayingCard.Group(Couleurs.Trefle, Numero.Trois) :: PlayingCard.Group(Couleurs.Coeur, Numero.Trois) ::  PlayingCard.Group(Couleurs.Trefle, Numero.Roi) :: Nil
+    val mains7 = MainsPossible.PlusHaute :: MainsPossible.DeuxPaire :: MainsPossible.Paire :: MainsPossible.Paire :: Nil
+    getMains(maMain7) shouldBe mains7
+
+
   }
 
   "getBestMains" should "be defined" in {
@@ -71,7 +99,7 @@ class PokerTest extends AnyFlatSpec {
 
   }
 
-  /*
+
   "getQuinte" should "be defined" in {
     val main1 = PlayingCard.Group(Couleurs.Coeur, Numero.Deux) :: PlayingCard.Group(Couleurs.Coeur, Numero.Trois) :: PlayingCard.Group(Couleurs.Coeur, Numero.Quatre) :: PlayingCard.Group(Couleurs.Coeur, Numero.Cinq) :: PlayingCard.Group(Couleurs.Trefle, Numero.Six) :: Nil
     getQuinte(main1) shouldEqual true

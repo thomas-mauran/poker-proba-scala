@@ -1,10 +1,13 @@
 object Poker:
+
+  // Enumération des couleurs (formes)
   enum Couleurs:
     case Trefle
     case Pique
     case Carreau
     case Coeur
 
+  // Enumération des numéros et têtes (classé par ordre pour utiliser ordinal)
   enum Numero:
     case Deux
     case Trois
@@ -20,25 +23,7 @@ object Poker:
     case Roi
     case As
 
-  enum PlayingCard:
-    case Group(col: Couleurs, num: Numero)
-
-  object CarteClassementNumero extends scala.math.Ordering[PlayingCard] {
-    override def compare(card: PlayingCard, to: PlayingCard): Int = (card, to) match {
-      case (PlayingCard.Group(_, x), PlayingCard.Group(_, y)) => x.ordinal - y.ordinal;
-    }
-  }
-
-  object CarteClassementCouleur extends scala.math.Ordering[PlayingCard] {
-    override def compare(card: PlayingCard, to: PlayingCard): Int = (card, to) match {
-      case (PlayingCard.Group(x, _), PlayingCard.Group(y, _)) => x.ordinal - y.ordinal;
-    }
-  }
-
-  def isNextCard(card1: PlayingCard, card2: PlayingCard): Boolean = (card1, card2) match {
-    case (PlayingCard.Group(a, x), PlayingCard.Group(_, y)) => if (x.ordinal + 1 > Numero.values.length - 1) false else Numero.fromOrdinal(x.ordinal + 1) == y
-  }
-
+  // Liste de toute les mains possible (classé par ordre pour utiliser ordinal)
   enum MainsPossible:
     case PlusHaute
     case Paire
@@ -51,11 +36,39 @@ object Poker:
     case QuintFlush
     case QuintFlushRoyale
 
+  // On definie une carte comme un groupe d'une couleur et d'un numéro
+  enum PlayingCard:
+    case Group(col: Couleurs, num: Numero)
+
+
+  // return > 0 si la carte 1 et plus forte que la carte 2, 0 si les deux cartes sont les mêmes et < 0 si carte 2 plus forte que carte 1
+  object CarteClassementNumero extends scala.math.Ordering[PlayingCard] {
+    override def compare(card: PlayingCard, to: PlayingCard): Int = (card, to) match {
+      case (PlayingCard.Group(_, x), PlayingCard.Group(_, y)) => x.ordinal - y.ordinal;
+    }
+  }
+
+  // même principe que CarteClassementNumero mais pour les couleurs (on ne l'utilise pas)
+  object CarteClassementCouleur extends scala.math.Ordering[PlayingCard] {
+    override def compare(card: PlayingCard, to: PlayingCard): Int = (card, to) match {
+      case (PlayingCard.Group(x, _), PlayingCard.Group(y, _)) => x.ordinal - y.ordinal;
+    }
+  }
+  // utilisé pour verifier si il y a une quinte dans la fonction isQuinte
+
+  def isNextCard(card1: PlayingCard, card2: PlayingCard): Boolean = (card1, card2) match {
+    case (PlayingCard.Group(a, x), PlayingCard.Group(_, y)) => if (x.ordinal + 1 > Numero.values.length - 1) false else Numero.fromOrdinal(x.ordinal + 1) == y
+  }
+
+
+
+  // retourne le nombre de fois qu'une carte est dans la main
   def getOccurence(card: PlayingCard, main: List[PlayingCard]): Int = (main, card) match {
     case (Nil, _) => 0
     case (PlayingCard.Group(_, x) :: z, PlayingCard.Group(_, y)) => if (x == y) 1 + getOccurence(card, z) else getOccurence(card, z)
   }
 
+  // retourne une liste qui pour chaque carte dans notre main retourne son nombre d'occurence
   def getMultipleOccurence(main: List[PlayingCard]): List[(PlayingCard, Int)] = main match {
     case Nil => Nil
     case x :: z =>
@@ -64,11 +77,13 @@ object Poker:
       }))
   }
 
+  // même principe que getMultipleOccurence mais pour les couleurs
   def getCouleurOccurence(card: PlayingCard, main: List[PlayingCard]): Int = (main, card) match {
     case (Nil, _) => 0
     case (PlayingCard.Group(x, _) :: z, PlayingCard.Group(y, _)) => if (x == y) 1 + getCouleurOccurence(card, z) else getOccurence(card, z)
   }
 
+  // Prends une liste de carte et retourne une autre liste composées des mains possible a partir de la liste initiale
   def getMainsNumero(occur: List[(PlayingCard, Int)]): List[MainsPossible] = occur match {
     case Nil => Nil
     case (c, i) :: z => {
@@ -83,6 +98,7 @@ object Poker:
     }
   }
 
+  // renvoie le type de quinte que c'est
   def getQuinte(main: List[PlayingCard]): List[MainsPossible] = {
     val mainSortedNumero = main.sorted(CarteClassementNumero)
     val quinte = isQuinte(mainSortedNumero)
@@ -95,27 +111,33 @@ object Poker:
           else Nil
   }
 
+  // true ou false si c'est une quinte flush royale ou pas
   def isQuinteFlushRoyale(main: List[PlayingCard]): Boolean = main match {
     case Nil => false
     case PlayingCard.Group(_, x) :: z => x == Numero.Dix
   }
 
+  // True ou false si c'est une quinte ou pas
   def isQuinte(main: List[PlayingCard]): Boolean = main match {
     case Nil => false
     case x :: Nil => true
     case x :: y :: z => if (isNextCard(x, y)) isQuinte(y :: z) else false
   }
 
+  // true ou false si la liste de carte contient une couleur
   def isCouleur(main: List[PlayingCard]): Boolean = main match {
     case Nil => false
     case x :: Nil => true
     case PlayingCard.Group(x, a) :: PlayingCard.Group(y, b) :: z => if (x == y) isCouleur(PlayingCard.Group(y, b) :: z) else false
   }
 
+  // retourne les mains possible a partir d'une liste passée en argument
   def getMains(main: List[PlayingCard]): List[MainsPossible] = MainsPossible.PlusHaute :: getMainsNumero(getMultipleOccurence(main)).concat(getQuinte(main))
 
+  // retourne la meilleur main depuis une liste de carte passée en argument
   def getBestMain(main: List[PlayingCard]): MainsPossible = getMains(main).sorted(HandClassement).head
 
+  //pour triéer par rapport aux meilleurs cartes
   object HandClassement extends scala.math.Ordering[MainsPossible] {
     override def compare(hand: MainsPossible, to: MainsPossible): Int = (hand, to) match {
       case (x, y) => y.ordinal - x.ordinal;
